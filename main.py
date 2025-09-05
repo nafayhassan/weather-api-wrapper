@@ -1,0 +1,42 @@
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+import models
+import schemas
+import services
+from database import engine, SessionLocal
+
+models.Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title="Weather API Wrapper")
+
+
+# Dependency: DB Session
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+@app.get("/weather/{city}", response_model=schemas.WeatherResponse)
+async def get_weather(city: str, db: Session = Depends(get_db)):
+    weather = await services.fetch_weather(city)
+    if not weather:
+        return {"city": city, "temperature": 0, "description": "Not found", "timestamp": None}
+
+    db_weather = models.WeatherHistory(
+        city=city,
+        temperature=weather["temperature"],
+        description=weather["description"]
+    )
+    db.add(db_weather)
+    db.commit()
+    db.refresh(db_weather)
+
+    return db_weather
+
+
+@app.get("/history", response_model=[schemas.WeatherResponse])
+def get_history(db: Session = Depends(get_db)):
+    return db.query(models.WeatherHistory).all()
