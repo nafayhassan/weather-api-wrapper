@@ -83,3 +83,13 @@ async def get_forecast(city: str, days: int = 5):
         return {"city": city, "forecast": "not available right now"}
     return data
 
+
+# DELETE OLD RECORDS
+@app.delete("/history/{record_id}")
+def delete_history(record_id: int, db: Session = Depends(get_db)):
+    record = db.query(models.WeatherHistory).filter(models.WeatherHistory.id == record_id).first()
+    if not record:
+        return {"error": "Record not found"}
+    db.delete(record)
+    db.commit()
+    return {"message": f"Record {record_id} Deleted successfully"}
