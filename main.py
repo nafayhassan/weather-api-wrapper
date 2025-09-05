@@ -74,3 +74,4 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
 
     return db_weather
 
+
