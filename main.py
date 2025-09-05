@@ -93,3 +93,10 @@ def delete_history(record_id: int, db: Session = Depends(get_db)):
     db.delete(record)
     db.commit()
     return {"message": f"Record {record_id} Deleted successfully"}
+
+
+# LIST ALL CITIES IN DATABASE
+@app.get("/cities")
+def get_cities(db: Session = Depends(get_db)):
+    cities = db.query(models.WeatherHistory.city).distinct().all()
+    return {"cities": [c[0] for c in cities]}
