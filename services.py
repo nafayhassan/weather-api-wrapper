@@ -83,3 +83,29 @@ async def fetch_weather_by_coordinates(lat: float, lon: float):
     except Exception:
         return None
 
+
+# FETCH FORECAST
+async def fetch_forecast(city: str, days: int = 5):
+    try:
+        geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}"
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            geo = await client.get(geo_url)
+            geo.raise_for_status()
+            geo_data = geo.json()
+
+        if "results" not in geo_data or not geo_data["results"]:
+            return None
+
+        lat = geo_data["results"][0]["latitude"]
+        lon = geo_data["results"][0]["longitude"]
+
+        forecast_url = (
+            f"https://api.open-meteo.com/v1/forecast?"
+            f"latitude={lat}&longitude={lon}&daily=temperature_2m_max,temperature_2m_min&forecast_days={days}&timezone=auto"
+        )
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            forecast = await client.get(forecast_url)
+            forecast.raise_for_status()
+            return forecast.json()
+    except Exception:
+        return None
