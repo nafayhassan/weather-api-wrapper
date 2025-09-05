@@ -1,3 +1,7 @@
+import sys, os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pytest
 from fastapi.testclient import TestClient
 from main import app
@@ -21,3 +25,5 @@ def test_weather_by_city():
     assert "description" in data
     assert "city" in data
     assert data["city"].lower() == "lagos"
+
+
