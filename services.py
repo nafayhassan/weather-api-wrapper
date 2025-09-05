@@ -3,6 +3,7 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
+
 async def fetch_weather(city: str):
     try:
         # Step 1: Get coordinates
