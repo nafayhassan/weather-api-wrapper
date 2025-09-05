@@ -1,6 +1,4 @@
 ---
-
-```markdown
 # Weather API Wrapper 🌦️
 
 <img width="1536" height="1024" alt="Weather API Wrapper Dashboard" src="https://github.com/user-attachments/assets/0d3d770d-5a5b-4537-8805-ad902ce285c0" />
