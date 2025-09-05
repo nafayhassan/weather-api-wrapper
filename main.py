@@ -51,3 +51,6 @@ async def get_weather(city: str, db: Session = Depends(get_db)):
 @app.get("/history", response_model=List[schemas.WeatherResponse])
 def get_history(db: Session = Depends(get_db)):
     return db.query(models.WeatherHistory).all()
+
+
+# GET WEATHER BY C0 ORDINATES
