@@ -153,7 +153,3 @@ FastAPI provides built-in API docs:
 
 This project is licensed under the MIT License.
 
-```
-
-Would you like me to also add a **section for Docker support** in the README so recruiters see it’s production-ready?
-```
