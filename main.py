@@ -61,7 +61,14 @@ app.get("/weather/coordinates")
 async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(get_db)):
     weather = await services.fetch_weather_by_coordinates(lat, lon)
     if not weather:
+        return {
+            "city": f"({lat},{lon})",
+            "description": "not found",
+            "temperature": None,
+            "timestamp": datetime.utcnow()
+        }
 
+    db_weather =
 
 
 # FETCH FORECAST DATA
