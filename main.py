@@ -4,6 +4,7 @@ import models
 import schemas
 import services
 from database import engine, SessionLocal
+from typing import List
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -37,6 +38,6 @@ async def get_weather(city: str, db: Session = Depends(get_db)):
     return db_weather
 
 
-@app.get("/history", response_model=[schemas.WeatherResponse])
+@app.get("/history", response_model=List[schemas.WeatherResponse])
 def get_history(db: Session = Depends(get_db)):
     return db.query(models.WeatherHistory).all()

@@ -9,4 +9,4 @@ class WeatherResponse(BaseModel):
     timestamp: datetime
 
     class Config:
-        orm_mode = True
+        form_attributes = True
