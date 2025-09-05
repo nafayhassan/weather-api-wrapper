@@ -1,10 +1,12 @@
 import httpx
+import logging
 
 
 async def fetch_weather(city: str):
+    logging.info(f"Fetching weather for {city}")
     # using Open-Meteo free api
     url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}"
-    async with httpx.AsyncClient as client:
+    async with httpx.AsyncClient(timeout=10.0) as client:
         geo_response = await client.get(url)
         geo_data = geo_response.json()
 

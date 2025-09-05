@@ -20,6 +20,11 @@ def get_db():
         db.close()
 
 
+@app.get("/ping")
+def ping():
+    return {"message": "pong"}
+
+
 @app.get("/weather/{city}", response_model=schemas.WeatherResponse)
 async def get_weather(city: str, db: Session = Depends(get_db)):
     weather = await services.fetch_weather(city)
