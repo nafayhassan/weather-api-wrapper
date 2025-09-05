@@ -70,3 +70,15 @@ def test_get_cities():
     assert isinstance(data["cities"], list)
 
 
+# -------- DELETE HISTORY RECORD --------- #
+def test_delete_records():
+    # insert a weather record
+    insert_response = client.get("/weather/Accra")
+    assert insert_response.status_code == 200
+    record_id = insert_response.json()["id"]
+
+    # delete inserted record
+    delete_response = client.delete(f"/history/{record_id}")
+    assert delete_response.status_code == 200
+    assert delete_response.json() == {"message": f"Record {record_id} deleted successfully"}
+
