@@ -75,3 +75,11 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
     return db_weather
 
 
+# FETCH FORECAST DATA
+@app.get("/forecast/{city}")
+async def get_forecast(city: str, days: int = 5):
+    data = await services.fetch_forecast(city, days)
+    if not data:
+        return {"city": city, "forecast": "not available right now"}
+    return data
+
