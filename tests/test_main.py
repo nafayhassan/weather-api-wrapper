@@ -60,3 +60,13 @@ def test_get_history():
         assert "city" in data[0]
         assert "temperature" in data[0]
 
+
+# -------- CITIES ----------- #
+def test_get_cities():
+    response = client.get("/cities")
+    assert response.status_code == 200
+    data = response.json()
+    assert "cities" in data
+    assert isinstance(data["cities"], list)
+
+
