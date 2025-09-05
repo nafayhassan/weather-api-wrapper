@@ -82,3 +82,4 @@ async def fetch_weather_by_coordinates(lat: float, lon: float):
             }
     except Exception:
         return None
+
