@@ -56,3 +56,29 @@ async def fetch_weather(city: str):
     except Exception as e:
         logging.error(f"Unexpected error: {e}")
         return None
+
+
+# GET WEATHER BY C0 ORDINATES
+async def fetch_weather_by_coordinates(lat: float, lon: float):
+    try:
+        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            data = response.json()
+
+            current = data.get("current_weather", {})
+            if not current:
+                return None
+
+            weather_codes = {
+                0: "Clear sky", 1: "Mainly clear", 2: "Partly cloud", 3: "Overcast",
+                45: "Fog", 51: "Light rain", 61: "Rain showers",
+            }
+
+            return {
+                "temperature": current.get("temperature"),
+                "description": weather_codes.get(current.get("weathercode"), "unknown"),
+            }
+    except Exception:
+        return None
