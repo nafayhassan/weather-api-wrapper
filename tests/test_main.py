@@ -27,3 +27,17 @@ def test_weather_by_city():
     assert data["city"].lower() == "lagos"
 
 
+# ------ WEATHER BY CO ORDINATES --------- #
+def test_weather_coordinates():
+    response = client.get("/weather/coordinates?lat=6.5244&lon=3.3792")
+    assert response.status_code == 200
+    data = response.json()
+    assert "temperature" in data
+    assert "description" in data
+    assert "city" in data
+    assert "(6.5244,3.3792)" in data["city"]
+
+
+# ------ FORECAST -------------- #
+def test_forecast_city():
+
