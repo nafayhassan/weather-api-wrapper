@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 import models
@@ -29,19 +30,23 @@ def ping():
 async def get_weather(city: str, db: Session = Depends(get_db)):
     weather = await services.fetch_weather(city)
     if not weather:
-        return {"city": city, "temperature": 0, "description": "Not found", "timestamp": None}
+        return {
+            "city": city,
+            "temperature": 0,
+            "description": "Not found",
+            "timestamp": datetime.utcnow()
+        }
 
     db_weather = models.WeatherHistory(
         city=city,
         temperature=weather["temperature"],
-        description=weather["description"]
+        description=weather["description"],
     )
     db.add(db_weather)
     db.commit()
     db.refresh(db_weather)
 
     return db_weather
-
 
 @app.get("/history", response_model=List[schemas.WeatherResponse])
 def get_history(db: Session = Depends(get_db)):
