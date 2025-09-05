@@ -40,4 +40,23 @@ def test_weather_coordinates():
 
 # ------ FORECAST -------------- #
 def test_forecast_city():
+    response = client.get("/forecast/London?days=3")
+    assert response.status_code == 200
+    data = response.json()
+    assert "city" in data
+    assert data["city"].lower() == "london"
+    assert "daily" in data
+    assert "temperature_2m_max" in data["daily"]
+    assert len(data["daily"]["temperature_2m_max"]) == 3
+
+
+# -------- HISTORY ----------- #
+def test_get_history():
+    response = client.get("/history")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    if len(data) > 0:
+        assert "city" in data[0]
+        assert "temperature" in data[0]
 
