@@ -143,7 +143,7 @@ FastAPI provides built-in API docs:
 
 ## 👨‍💻 Author
 
-**Your Name**
+**ENGR. IPAYE**
 📧 [b.tunde.ipaye@gmail.com](mailto:b.tunde.ipaye@gmail.com)
 🔗 [LinkedIn](https://linkedin.com/in/engripayebabatunde) | [GitHub](https://github.com/engripaye)
 
