@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from sqlalchemy.orm import Session
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 import models
 import schemas
 import services
@@ -11,11 +13,7 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Weather API Wrapper")
 
-
-# PUBLIC END POINT
-@app.get("/")
-def root():
-    return {"message": "Weather API is running! Go to /docs for usage."}
+templates = Jinja2Templates(directory="templates")
 
 
 # Dependency: DB Session
@@ -25,6 +23,12 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+# PUBLIC END POINT
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/ping")
@@ -76,12 +80,11 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
     }
 
 
-@app.get("/weather/{city}")
-async def get_weather(city: str, db: Session = Depends(get_db)):
+@app.get("/weather/ui/{city}", response_class=HTMLResponse)
+async def get_weather_ui(request: Request, city: str, db: Session = Depends(get_db)):
     weather = await services.fetch_weather(city)
 
     if not weather:
-        # ✅ still create a DB entry so tests have an ID
         db_weather = models.WeatherHistory(
             city=city,
             temperature=None,
@@ -90,32 +93,23 @@ async def get_weather(city: str, db: Session = Depends(get_db)):
         db.add(db_weather)
         db.commit()
         db.refresh(db_weather)
+    else:
+        db_weather = models.WeatherHistory(
+            city=city,
+            temperature=weather["temperature"],
+            description=weather["description"]
+        )
+        db.add(db_weather)
+        db.commit()
+        db.refresh(db_weather)
 
-        return {
-            "id": db_weather.id,
-            "city": city,
-            "temperature": None,
-            "description": "not found",
-            "timestamp": db_weather.timestamp
-        }
-
-    db_weather = models.WeatherHistory(
-        city=city,
-        temperature=weather["temperature"],
-        description=weather["description"]
-    )
-    db.add(db_weather)
-    db.commit()
-    db.refresh(db_weather)
-
-    return {
-        "id": db_weather.id,
-        "city": city,
+    return templates.TemplateResponse("weather.html", {
+        "request": request,
+        "city": db_weather.city,
         "temperature": db_weather.temperature,
         "description": db_weather.description,
         "timestamp": db_weather.timestamp
-    }
-
+    })
 
 @app.get("/history", response_model=List[schemas.WeatherResponse])
 def get_history(db: Session = Depends(get_db)):

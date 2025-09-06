@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather in {{ city }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f0f9ff; color: #111827; }
+        h1 { color: #1d4ed8; }
+        .card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 300px; }
+    </style>
+</head>
+<body>
+<h1>🌤 Weather Report</h1>
+<div class="card">
+    <h2>{{ city }}</h2>
+    <p><strong>Temperature:</strong> {{ temperature or "N/A" }}</p>
+    <p><strong>Description:</strong> {{ description }}</p>
+    <p><small>{{ timestamp }}</small></p>
+</div>
+<p><a href="/">⬅ Back</a></p>
+</body>
+</html>
