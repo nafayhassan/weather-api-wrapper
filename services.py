@@ -61,27 +61,32 @@ async def fetch_weather(city: str):
 # GET WEATHER BY C0 ORDINATES
 async def fetch_weather_by_coordinates(lat: float, lon: float):
     try:
-        url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
+        url = (
+            f"https://api.open-meteo.com/v1/forecast"
+            f"?latitude={lat}&longitude={lon}&current_weather=true&timezone=auto"
+        )
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(url)
             response.raise_for_status()
             data = response.json()
 
-            current = data.get("current_weather", {})
-            if not current:
-                return None
+        current = data.get("current_weather", {})
+        if not current:
+            return None
 
-            weather_codes = {
-                0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
-                45: "Fog", 51: "Light rain", 61: "Rain showers",
-            }
+        weather_codes = {
+            0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+            45: "Fog", 51: "Light rain", 61: "Rain showers",
+        }
 
-            return {
-                "temperature": current.get("temperature"),
-                "description": weather_codes.get(current.get("weathercode"), "unknown"),
-            }
-    except Exception:
+        return {
+            "temperature": current.get("temperature"),
+            "description": weather_codes.get(current.get("weathercode"), "unknown"),
+        }
+    except Exception as e:
+        logging.error(f"Coordinate fetch failed: {e}")
         return None
+
 
 # FETCH FORECAST
 async def fetch_forecast(city: str, days: int = 5):
