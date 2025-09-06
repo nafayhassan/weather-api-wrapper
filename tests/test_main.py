@@ -1,4 +1,5 @@
 import sys, os
+from unittest.mock import patch
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -29,13 +30,19 @@ def test_weather_by_city():
 
 # ------ WEATHER BY CO ORDINATES --------- #
 def test_weather_coordinates():
-    response = client.get("/weather/coordinates?lat=6.5244&lon=3.3792")
-    assert response.status_code == 200
-    data = response.json()
-    assert "temperature" in data
-    assert "description" in data
-    assert "city" in data
-    assert "(6.5244,3.3792)" in data["city"]
+    mock_weather = {
+        "temperature": 28.5,
+        "description": "Clear sky"
+    }
+
+    with patch("services.fetch_weather_by_coordinates", return_value=mock_weather):
+        response = client.get("/weather/coordinates?lat=6.5244&lon=3.3792")
+        assert response.status_code == 200
+        data = response.json()
+        assert "temperature" in data
+        assert "description" in data
+        assert "city" in data
+        assert "(6.5244,3.3792)" in data["city"]
 
 
 # ------ FORECAST -------------- #
