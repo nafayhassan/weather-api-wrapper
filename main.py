@@ -81,7 +81,7 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
 
     return {
         "id": db_weather.id,
-        "city": db_weather.city,
+        "city": f"({lat},{lon})",
         "temperature": db_weather.temperature,
         "description": db_weather.description,
         "timestamp": db_weather.timestamp
