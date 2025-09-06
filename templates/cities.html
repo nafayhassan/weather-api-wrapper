@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Saved Cities</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f9fafb; color: #333; }
+        h1 { color: #1d4ed8; }
+        table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #e5e7eb; text-align: left; }
+    </style>
+</head>
+<body>
+<h1>🌍 Saved Cities</h1>
+<table>
+    <tr><th>ID</th><th>City</th><th>Temperature</th><th>Description</th><th>Time</th></tr>
+    {% for city in cities %}
+    <tr>
+        <td>{{ city.id }}</td>
+        <td>{{ city.city }}</td>
+        <td>{{ city.temperature or "N/A" }}</td>
+        <td>{{ city.description }}</td>
+        <td>{{ city.timestamp }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p><a href="/">⬅ Back</a></p>
+</body>
+</html>
