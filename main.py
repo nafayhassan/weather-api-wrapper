@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 import models
@@ -81,10 +81,10 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
 
     if not weather:
         return {
-            "city": city_name,          # ✅ was "coordinates", fix this
+            "city": city_name,  # ✅ was "coordinates", fix this
             "description": "not found",
-            "temperature": 0.0,         # avoid NoneType validation errors
-            "timestamp": datetime.now(datetime.UTC)
+            "temperature": None,  # avoid NoneType validation errors
+            "timestamp": datetime.now(timezone.utc)
         }
 
     db_weather = models.WeatherHistory(
@@ -98,12 +98,11 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
 
     return {
         "id": db_weather.id,
-        "city": city_name,              # ✅ return same format
+        "city": city_name,  # ✅ return same format
         "temperature": db_weather.temperature,
         "description": db_weather.description,
         "timestamp": db_weather.timestamp
     }
-
 
 
 # FETCH FORECAST DATA
