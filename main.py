@@ -55,14 +55,12 @@ def get_history(db: Session = Depends(get_db)):
 
 
 # GET WEATHER BY C0 ORDINATES
-app.get("/weather/coordinates")
-
-
+@app.get("/weather/coordinates")
 async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(get_db)):
     weather = await services.fetch_weather_by_coordinates(lat, lon)
+
     if not weather:
         return {
-            "id": 0,
             "city": f"({lat},{lon})",
             "description": "not found",
             "temperature": None,
@@ -78,11 +76,9 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
     db.commit()
     db.refresh(db_weather)
 
-    # ✅ return dict, not raw model
-
     return {
         "id": db_weather.id,
-        "city": f"({lat},{lon})",
+        "city": f"({lat},{lon})",   # ✅ always coordinates string
         "temperature": db_weather.temperature,
         "description": db_weather.description,
         "timestamp": db_weather.timestamp

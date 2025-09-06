@@ -72,7 +72,7 @@ async def fetch_weather_by_coordinates(lat: float, lon: float):
                 return None
 
             weather_codes = {
-                0: "Clear sky", 1: "Mainly clear", 2: "Partly cloud", 3: "Overcast",
+                0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
                 45: "Fog", 51: "Light rain", 61: "Rain showers",
             }
 
@@ -82,7 +82,6 @@ async def fetch_weather_by_coordinates(lat: float, lon: float):
             }
     except Exception:
         return None
-
 
 # FETCH FORECAST
 async def fetch_forecast(city: str, days: int = 5):
