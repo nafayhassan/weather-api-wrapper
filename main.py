@@ -26,27 +26,45 @@ def ping():
     return {"message": "pong"}
 
 
-@app.get("/weather/{city}", response_model=schemas.WeatherResponse)
+@app.get("/weather/{city}")
 async def get_weather(city: str, db: Session = Depends(get_db)):
     weather = await services.fetch_weather(city)
+
     if not weather:
+        # ✅ still create a DB entry so tests have an ID
+        db_weather = models.WeatherHistory(
+            city=city,
+            temperature=None,
+            description="not found"
+        )
+        db.add(db_weather)
+        db.commit()
+        db.refresh(db_weather)
+
         return {
+            "id": db_weather.id,
             "city": city,
-            "temperature": 0,
-            "description": "Not found",
-            "timestamp": datetime.utcnow()
+            "temperature": None,
+            "description": "not found",
+            "timestamp": db_weather.timestamp
         }
 
     db_weather = models.WeatherHistory(
         city=city,
         temperature=weather["temperature"],
-        description=weather["description"],
+        description=weather["description"]
     )
     db.add(db_weather)
     db.commit()
     db.refresh(db_weather)
 
-    return db_weather
+    return {
+        "id": db_weather.id,
+        "city": city,
+        "temperature": db_weather.temperature,
+        "description": db_weather.description,
+        "timestamp": db_weather.timestamp
+    }
 
 
 @app.get("/history", response_model=List[schemas.WeatherResponse])
@@ -77,7 +95,7 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
 
     return {
         "id": db_weather.id,
-        "city": f"({lat},{lon})",   # ✅ always coordinates string
+        "city": f"({lat},{lon})",  # ✅ always coordinates string
         "temperature": db_weather.temperature,
         "description": db_weather.description,
         "timestamp": db_weather.timestamp
@@ -102,7 +120,6 @@ async def get_forecast(city: str, days: int = 5):
         "city": city,
         **data
     }
-
 
 
 # DELETE OLD RECORDS

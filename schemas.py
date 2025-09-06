@@ -6,7 +6,7 @@ from typing import Optional
 class WeatherResponse(BaseModel):
     id: Optional[int] = None
     city: str
-    temperature: float
+    temperature: Optional[float]
     description: str
     timestamp: datetime
 
