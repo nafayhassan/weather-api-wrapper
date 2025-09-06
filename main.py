@@ -188,8 +188,8 @@ def delete_history(record_id: int, db: Session = Depends(get_db)):
     return {"message": f"Record {record_id} Deleted successfully"}
 
 
-# LIST ALL CITIES IN DATABASE
-@app.get("/cities")
-def get_cities(db: Session = Depends(get_db)):
-    cities = db.query(models.WeatherHistory.city).distinct().all()
-    return {"cities": [c[0] for c in cities]}
+# LIST ALL CITIES IN DATABASE (UI version)
+@app.get("/cities/ui", response_class=HTMLResponse)
+def get_cities_ui(request: Request, db: Session = Depends(get_db)):
+    cities = db.query(models.WeatherHistory).all()
+    return templates.TemplateResponse("cities.html", {"request": request, "cities": cities})
