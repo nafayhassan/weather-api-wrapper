@@ -5,19 +5,82 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 2rem; background: #f9fafb; color: #333; }
         h1 { color: #1d4ed8; }
+        h2 { margin-top: 2rem; color: #111; }
         a { color: #2563eb; text-decoration: none; }
         a:hover { text-decoration: underline; }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .card {
+            display: block;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+        }
+        .blue { background: #1d4ed8; }
+        .green { background: #10b981; }
+        .yellow { background: #f59e0b; }
+        .gray { background: #6b7280; }
+        .search-bar {
+            margin-top: 1rem;
+        }
+        input[type="text"] { padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 0.5rem 1rem; border: none; border-radius: 5px; background: #1d4ed8; color: white; cursor: pointer; }
+        button:hover { background: #2563eb; }
+        footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: #555;
+        }
     </style>
 </head>
 <body>
 <h1>🌤 Weather API</h1>
-<p>🌍 Welcome to Weather API built by ENGR. IPAYE</p>
-<ul>
-    <li><a href="/weather/ui/Lagos">🌤 Weather in Lagos(UI)</a></li>
-    <li><a href="/weather/coordinates?lat=6.5244&lon=3.3792">📍 Weather by Coordinates(JSON)</a></li>
-    <li><a href="/cities/ui">🌆 Saved Cities(UI)</a></li>
-    <li><a href="/docs">🗺️ API Docs</a></li>
-    <li><a href="/search">🔍 Search Weather</a></li>
-</ul>
+<p>🌍 Welcome to Weather API built by <strong>ENGR. IPAYE</strong></p>
+
+<!-- Live clock -->
+<p id="datetime"></p>
+
+<!-- Quick search -->
+<div class="search-bar">
+    <form action="/weather/ui/" method="get" onsubmit="event.preventDefault(); window.location='/weather/ui/'+this.city.value;">
+        <input type="text" name="city" placeholder="Enter a city..." required>
+        <button type="submit">Check Weather</button>
+    </form>
+</div>
+
+<!-- Navigation cards -->
+<div class="nav-grid">
+    <a href="/weather/ui/Lagos" class="card blue">🌤 Weather in Lagos (UI)</a>
+    <a href="/weather/coordinates?lat=6.5244&lon=3.3792" class="card gray">📍 Weather by Coordinates (JSON)</a>
+    <a href="/cities/ui" class="card green">🌆 Saved Cities (UI)</a>
+    <a href="/docs" class="card yellow">🗺️ API Docs</a>
+    <a href="/search" class="card blue">🔍 Search Weather</a>
+</div>
+
+<!-- Featured Weather -->
+<h2>🌟 Featured City: Lagos</h2>
+<iframe src="/weather/ui/Lagos" style="width:100%; height:300px; border:none; border-radius:8px; background:white;"></iframe>
+
+<!-- Footer -->
+<footer>
+    🚀 Built by <strong>ENGR. IPAYE</strong> | Powered by FastAPI + Open-Meteo
+</footer>
+
+<script>
+    // live clock
+    function updateTime() {
+        const now = new Date();
+        document.getElementById("datetime").innerText =
+            "🕒 " + now.toLocaleString();
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
 </body>
 </html>
