@@ -68,8 +68,24 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
             "timestamp": datetime.utcnow()
         }
 
-    db_weather =
+    db_weather = models.WeatherHistory(
+        city=f"({lat},{lon})",
+        temperature=weather["temperature"],
+        description=weather["description"]
+    )
+    db.add(db_weather)
+    db.commit()
+    db.refresh(db_weather)
 
+    # ✅ return dict, not raw model
+
+    return {
+        "id": db_weather.id,
+        "city": db_weather.city,
+        "temperature": db_weather.temperature,
+        "description": db_weather.description,
+        "timestamp": db_weather.timestamp
+    }
 
 # FETCH FORECAST DATA
 @app.get("/forecast/{city}")
