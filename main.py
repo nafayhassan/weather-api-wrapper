@@ -87,13 +87,20 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
         "timestamp": db_weather.timestamp
     }
 
+
 # FETCH FORECAST DATA
 @app.get("/forecast/{city}")
 async def get_forecast(city: str, days: int = 5):
     data = await services.fetch_forecast(city, days)
     if not data:
-        return {"city": city, "forecast": "not available right now"}
-    return data
+        return {"city": city,
+                "forecast": "not available right now"}
+
+    # ✅ Wrap response with city name
+    return {
+        "city": city,
+        **data  # merge Open-Meteo response (daily, daily_units, etc.)
+    }
 
 
 # DELETE OLD RECORDS
