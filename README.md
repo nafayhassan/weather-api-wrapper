@@ -1,155 +1,260 @@
 ---
-# Weather API Wrapper 🌦️
 
-<img width="1536" height="1024" alt="Weather API Wrapper Dashboard" src="https://github.com/user-attachments/assets/0d3d770d-5a5b-4537-8805-ad902ce285c0" />
+# 🌦️ Weather API Wrapper
 
-A simple and professional **Weather API Wrapper** built with **FastAPI**.  
-It fetches live weather data from the free [Open-Meteo API](https://open-meteo.com/), stores query history in **SQLite**, and returns results in a clean JSON format.  
+<img width="1536" height="1024" alt="Weather API Wrapper Dashboard" src="https://github.com/user-attachments/assets/a3d54011-3299-4742-b87d-5bf1981fd713" />
+
+A simple and professional Weather API Wrapper built with **FastAPI**, **SQLite**, and **httpx**.
+This project fetches weather data from the free [Open-Meteo API](https://open-meteo.com/) and stores query history locally.
+
+<img width="1536" height="1024" alt="Weather API Wrapper Flowchart" src="https://github.com/user-attachments/assets/88f056ec-985f-4be4-8a55-4e885f1e71c8" />
 
 ---
 
-## ✨ Features
-- 🌍 Fetch real-time weather by city name  
-- 💾 Store query history in SQLite  
-- 📜 Retrieve full history of past queries  
-- ⚡ Built with **FastAPI** + **httpx**  
-- 🗄️ Lightweight with **SQLite**  
+## ⚡ Features
+
+* Fetch **current weather** by city 🌍
+* Fetch **current weather by GPS coordinates** 📍
+* Fetch **5-day forecast** for a city 📅
+* Store weather history in SQLite 🗄️
+* Retrieve all history records 📖
+* Delete history records ❌
+* List all unique cities queried 🏙️
 
 ---
 
 ## 🛠️ Tech Stack
-- **Python 3.11+**
-- [FastAPI](https://fastapi.tiangolo.com/)
-- [httpx](https://www.python-httpx.org/)
-- [SQLAlchemy](https://www.sqlalchemy.org/)
-- SQLite (default database)
-- [Uvicorn](https://www.uvicorn.org/) (ASGI server)
+
+* **FastAPI** – Web framework
+* **httpx** – Async HTTP client for API calls
+* **SQLite + SQLAlchemy** – Database & ORM
+* **Pydantic** – Data validation
 
 ---
 
-```
-````
+## 📦 Installation
 
----
-
-## 🚀 Getting Started
-
-### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/yourusername/weather-api-wrapper.git
+# Clone repo
+git clone https://github.com/your-username/weather-api-wrapper.git
 cd weather-api-wrapper
-````
 
-### 2️⃣ Create Virtual Environment
-
-```bash
+# Create virtual environment
 python -m venv venv
-source venv/bin/activate   # Mac/Linux
+source venv/bin/activate   # Linux/Mac
 venv\Scripts\activate      # Windows
-```
 
-### 3️⃣ Install Dependencies
-
-```bash
+# Install dependencies
 pip install -r requirements.txt
+
+# Run server
+uvicorn main:app --reload
 ```
-
-### 4️⃣ Run the Server
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Server will start at:
-👉 `http://127.0.0.1:8000`
 
 ---
 
-## 📌 API Endpoints
+## 🔗 API Endpoints
 
-### ✅ Get Weather by City
+### 1. Health Check
 
-**Request:**
-
-```
-GET /weather/{city}
+```http
+GET /ping
 ```
 
-**Example:**
-
-```bash
-curl http://127.0.0.1:8000/weather/Lagos
-```
-
-**Response:**
+✅ Response:
 
 ```json
 {
-  "city": "Lagos",
-  "temperature": 28.5,
-  "description": "Clear sky",
-  "timestamp": "2025-09-05T16:30:12"
+  "message": "pong"
 }
 ```
 
 ---
 
-### 📜 Get Weather History
+### 2. Get Current Weather by City
 
-**Request:**
-
-```
-GET /history/
+```http
+GET /weather/{city}
 ```
 
-**Response:**
+✅ Example:
+
+```http
+GET /weather/Lagos
+```
+
+Response:
+
+```json
+{
+  "id": 1,
+  "city": "Lagos",
+  "temperature": 29.5,
+  "description": "Partly cloudy",
+  "timestamp": "2025-09-05T17:50:23"
+}
+```
+
+---
+
+### 3. Get Current Weather by Coordinates
+
+```http
+GET /weather/coordinates?lat={lat}&lon={lon}
+```
+
+✅ Example:
+
+```http
+GET /weather/coordinates?lat=6.5244&lon=3.3792
+```
+
+Response:
+
+```json
+{
+  "id": 2,
+  "city": "(6.5244,3.3792)",
+  "temperature": 29.0,
+  "description": "Clear sky",
+  "timestamp": "2025-09-05T17:55:42"
+}
+```
+
+---
+
+### 4. Get 5-Day Forecast
+
+```http
+GET /forecast/{city}?days=5
+```
+
+✅ Example:
+
+```http
+GET /forecast/London?days=5
+```
+
+Response:
+
+```json
+{
+  "city": "London",
+  "daily": {
+    "temperature_2m_max": [23.5, 22.1, 21.7, 24.0, 25.3],
+    "temperature_2m_min": [15.2, 14.8, 14.5, 15.0, 16.3]
+  }
+}
+```
+
+---
+
+### 5. Get Weather History
+
+```http
+GET /history
+```
+
+✅ Response:
 
 ```json
 [
   {
+    "id": 1,
     "city": "Lagos",
-    "temperature": 28.5,
-    "description": "Clear sky",
-    "timestamp": "2025-09-05T16:30:12"
+    "temperature": 29.5,
+    "description": "Partly cloudy",
+    "timestamp": "2025-09-05T17:50:23"
   },
   {
-    "city": "London",
-    "temperature": 21.3,
-    "description": "Cloudy",
-    "timestamp": "2025-09-05T16:31:40"
+    "id": 2,
+    "city": "(6.5244,3.3792)",
+    "temperature": 29.0,
+    "description": "Clear sky",
+    "timestamp": "2025-09-05T17:55:42"
   }
 ]
 ```
 
 ---
 
-## 🧪 Testing with Swagger
+### 6. Delete History Record
 
-FastAPI provides built-in API docs:
+```http
+DELETE /history/{id}
+```
 
-* Swagger UI 👉 [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
-* ReDoc 👉 [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+✅ Example:
 
----
+```http
+DELETE /history/2
+```
 
-## 📦 Future Improvements
+Response:
 
-* Add **weather forecasts (7-day)**
-* Support for multiple weather providers (fallback API)
-* Caching with **Redis**
-* Docker support
-
----
-
-## 👨‍💻 Author
-
-**ENGR. IPAYE**
-📧 [b.tunde.ipaye@gmail.com](mailto:b.tunde.ipaye@gmail.com)
-🔗 [LinkedIn](https://linkedin.com/in/engripayebabatunde) | [GitHub](https://github.com/engripaye)
+```json
+{
+  "message": "Record 2 deleted"
+}
+```
 
 ---
 
-## 📜 License
+### 7. List All Queried Cities
 
-This project is licensed under the MIT License.
+```http
+GET /cities
+```
+
+✅ Response:
+
+```json
+{
+  "cities": ["Lagos", "London", "(6.5244,3.3792)"]
+}
+```
+
+---
+
+## 🧪 Testing with Postman
+
+* Import the endpoints above into Postman
+* Start the server with:
+
+  ```bash
+  uvicorn main:app --reload
+  ```
+* Test endpoints like:
+
+  * `http://127.0.0.1:8000/weather/Lagos`
+  * `http://127.0.0.1:8000/forecast/London?days=3`
+
+---
+
+## 🚀 Future Improvements
+
+* Add caching with **Redis** for faster repeated lookups
+* Add user authentication with **JWT tokens**
+* Build a **React frontend** for visualizing weather
+
+---
+
+## 📄 License
+
+MIT License. Free to use and modify.
+
+---
+
+---
+
+## 👤 Author
+
+**Ipaye Babatunde**
+
+* 🌍 Lagos, Nigeria
+* 📧 [b.tunde.ipaye@gmail.com](mailto:b.tunde.ipaye@gmail.com)
+* 🔗 [LinkedIn](https://linkedin.com/in/engripayebabatunde)
+* 💻 [GitHub](https://github.com/engripaye)
+
+---
 
