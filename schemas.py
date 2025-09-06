@@ -3,10 +3,11 @@ from datetime import datetime
 
 
 class WeatherResponse(BaseModel):
+    id: int
     city: str
     temperature: float
     description: str
     timestamp: datetime
 
     class Config:
-        form_attributes = True
+        orm_mode = True

@@ -62,6 +62,7 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
     weather = await services.fetch_weather_by_coordinates(lat, lon)
     if not weather:
         return {
+            "id": 0,
             "city": f"({lat},{lon})",
             "description": "not found",
             "temperature": None,
