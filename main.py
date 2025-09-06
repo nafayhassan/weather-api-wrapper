@@ -75,16 +75,27 @@ def get_history(db: Session = Depends(get_db)):
 # GET WEATHER BY C0 ORDINATES
 @app.get("/weather/coordinates")
 async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(get_db)):
-    city_name = f"({lat},{lon})"  # ✅ Always format as coordinates
+    city_name = f"({lat},{lon})"  # Always formatted coordinates
 
     weather = await services.fetch_weather_by_coordinates(lat, lon)
 
     if not weather:
+        # ✅ Save to DB even if no weather found
+        db_weather = models.WeatherHistory(
+            city=city_name,
+            temperature=None,
+            description="not found"
+        )
+        db.add(db_weather)
+        db.commit()
+        db.refresh(db_weather)
+
         return {
-            "city": city_name,  # ✅ was "coordinates", fix this
+            "id": db_weather.id,
+            "city": city_name,
+            "temperature": None,
             "description": "not found",
-            "temperature": None,  # avoid NoneType validation errors
-            "timestamp": datetime.now(timezone.utc)
+            "timestamp": db_weather.timestamp
         }
 
     db_weather = models.WeatherHistory(
@@ -98,11 +109,12 @@ async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(
 
     return {
         "id": db_weather.id,
-        "city": city_name,  # ✅ return same format
+        "city": city_name,
         "temperature": db_weather.temperature,
         "description": db_weather.description,
         "timestamp": db_weather.timestamp
     }
+
 
 
 # FETCH FORECAST DATA
