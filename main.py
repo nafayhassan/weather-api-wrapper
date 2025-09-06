@@ -12,6 +12,12 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Weather API Wrapper")
 
 
+# PUBLIC END POINT
+@app.get("/")
+def root():
+    return {"message": "Weather API is running! Go to /docs for usage."}
+
+
 # Dependency: DB Session
 def get_db():
     db = SessionLocal()
