@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Search App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; background: #f9fafb; color: #111827; }
+        h1 { color: #1d4ed8; }
+        form { margin-bottom: 1.5rem; }
+        input[type="text"] { padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 0.5rem 1rem; background: #1d4ed8; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+<h1>🌦 Weather Search</h1>
+
+<form id="searchForm">
+    <label for="city">Enter City:</label>
+    <input type="text" id="city" name="city" required>
+    <button type="submit">Check Weather</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    const form = document.getElementById("searchForm");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const city = document.getElementById("city").value.trim();
+
+        if (!city) return;
+
+        try {
+            // call your API (UI version, so it shows pretty HTML)
+            const response = await fetch(`/weather/ui/${city}`);
+            if (response.ok) {
+                // replace entire page with the weather UI
+                const html = await response.text();
+                document.open();
+                document.write(html);
+                document.close();
+            } else {
+                resultDiv.innerHTML = `<p style="color:red;">City not found.</p>`;
+            }
+        } catch (err) {
+            resultDiv.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+        }
+    });
+</script>
+</body>
+</html>

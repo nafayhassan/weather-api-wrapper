@@ -25,6 +25,12 @@ def get_db():
         db.close()
 
 
+# SEARCH END POINT
+@app.get("/search", response_class=HTMLResponse)
+async def search_page(request: Request):
+    return templates.TemplateResponse("search.html", {"request": request})
+
+
 # PUBLIC END POINT
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
