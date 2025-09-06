@@ -26,6 +26,50 @@ def ping():
     return {"message": "pong"}
 
 
+# GET WEATHER BY C0 ORDINATES
+@app.get("/weather/coordinates")
+async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(get_db)):
+    city_name = f"({lat},{lon})"  # Always formatted coordinates
+
+    weather = await services.fetch_weather_by_coordinates(lat, lon)
+
+    if not weather:
+        # ✅ Save to DB even if no weather found
+        db_weather = models.WeatherHistory(
+            city=city_name,
+            temperature=None,
+            description="not found"
+        )
+        db.add(db_weather)
+        db.commit()
+        db.refresh(db_weather)
+
+        return {
+            "id": db_weather.id,
+            "city": city_name,
+            "temperature": None,
+            "description": "not found",
+            "timestamp": db_weather.timestamp
+        }
+
+    db_weather = models.WeatherHistory(
+        city=city_name,
+        temperature=weather["temperature"],
+        description=weather["description"]
+    )
+    db.add(db_weather)
+    db.commit()
+    db.refresh(db_weather)
+
+    return {
+        "id": db_weather.id,
+        "city": city_name,
+        "temperature": db_weather.temperature,
+        "description": db_weather.description,
+        "timestamp": db_weather.timestamp
+    }
+
+
 @app.get("/weather/{city}")
 async def get_weather(city: str, db: Session = Depends(get_db)):
     weather = await services.fetch_weather(city)
@@ -70,51 +114,6 @@ async def get_weather(city: str, db: Session = Depends(get_db)):
 @app.get("/history", response_model=List[schemas.WeatherResponse])
 def get_history(db: Session = Depends(get_db)):
     return db.query(models.WeatherHistory).all()
-
-
-# GET WEATHER BY C0 ORDINATES
-@app.get("/weather/coordinates")
-async def get_weather_coordinates(lat: float, lon: float, db: Session = Depends(get_db)):
-    city_name = f"({lat},{lon})"  # Always formatted coordinates
-
-    weather = await services.fetch_weather_by_coordinates(lat, lon)
-
-    if not weather:
-        # ✅ Save to DB even if no weather found
-        db_weather = models.WeatherHistory(
-            city=city_name,
-            temperature=None,
-            description="not found"
-        )
-        db.add(db_weather)
-        db.commit()
-        db.refresh(db_weather)
-
-        return {
-            "id": db_weather.id,
-            "city": city_name,
-            "temperature": None,
-            "description": "not found",
-            "timestamp": db_weather.timestamp
-        }
-
-    db_weather = models.WeatherHistory(
-        city=city_name,
-        temperature=weather["temperature"],
-        description=weather["description"]
-    )
-    db.add(db_weather)
-    db.commit()
-    db.refresh(db_weather)
-
-    return {
-        "id": db_weather.id,
-        "city": city_name,
-        "temperature": db_weather.temperature,
-        "description": db_weather.description,
-        "timestamp": db_weather.timestamp
-    }
-
 
 
 # FETCH FORECAST DATA
