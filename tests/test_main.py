@@ -72,13 +72,14 @@ def test_get_cities():
 
 # -------- DELETE HISTORY RECORD --------- #
 def test_delete_records():
-    # insert a weather record
     insert_response = client.get("/weather/Accra")
     assert insert_response.status_code == 200
-    record_id = insert_response.json()["id"]
+    data = insert_response.json()
+    assert "id" in data
+    record_id = int(data["id"])   # ✅ ensure integer
 
-    # delete inserted record
     delete_response = client.delete(f"/history/{record_id}")
     assert delete_response.status_code == 200
     assert delete_response.json() == {"message": f"Record {record_id} Deleted successfully"}
+
 
