@@ -151,6 +151,37 @@ async def get_weather_ui(request: Request, city: str, db: Session = Depends(get_
         "timestamp": db_weather.timestamp
     })
 
+@app.get("/featured/weather/ui/{city}", response_class=HTMLResponse)
+async def get_weather_ui(request: Request, city: str, db: Session = Depends(get_db)):
+    weather = await services.fetch_weather(city)
+
+    if not weather:
+        db_weather = models.WeatherHistory(
+            city=city,
+            temperature=None,
+            description="not found"
+        )
+        db.add(db_weather)
+        db.commit()
+        db.refresh(db_weather)
+    else:
+        db_weather = models.WeatherHistory(
+            city=city,
+            temperature=weather["temperature"],
+            description=weather["description"]
+        )
+        db.add(db_weather)
+        db.commit()
+        db.refresh(db_weather)
+
+    return templates.TemplateResponse("featured_city_weather.html", {
+        "request": request,
+        "city": db_weather.city,
+        "temperature": db_weather.temperature,
+        "description": db_weather.description,
+        "timestamp": db_weather.timestamp
+    })
+
 
 @app.get("/history", response_model=List[schemas.WeatherResponse])
 def get_history(db: Session = Depends(get_db)):
@@ -193,3 +224,8 @@ def delete_history(record_id: int, db: Session = Depends(get_db)):
 def get_cities_ui(request: Request, db: Session = Depends(get_db)):
     cities = db.query(models.WeatherHistory).all()
     return templates.TemplateResponse("cities.html", {"request": request, "cities": cities})
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=5500)
