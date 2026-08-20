@@ -107,3 +107,8 @@ def test_delete_records():
     delete_response = client.delete(f"/history/{record_id}")
     assert delete_response.status_code == 200
     assert delete_response.json() == {"message": f"Record {record_id} Deleted successfully"}
+
+
+if __name__ == "__main__":
+    pytest.main()
+
